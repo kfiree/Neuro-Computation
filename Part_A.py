@@ -4,9 +4,8 @@ from numpy.random.mtrand import random
 
 DATA_SIZE = 1000
 
-def createData(debug=False):
 
-    # Syntax : np.random.randint(the range for ex if you choose 100 then your array elements will be within the range 0 to 100, size = (row size, col size)
+def createData(debug=False):
     np.random.seed(1)
     x_int = np.random.randint(-100, 99, size=(DATA_SIZE, 2))  # a is a variable(object)
     x_frac = np.round(np.random.rand(DATA_SIZE, 2), 2)
@@ -14,11 +13,8 @@ def createData(debug=False):
 
     y = np.empty(shape=[DATA_SIZE, 1])
 
-
-
     for i in range(DATA_SIZE):
         y[i] = 1 if x[i][1] > 1 else -1
-        # y[i]
 
     data = np.append(x, y, axis=1)
 
