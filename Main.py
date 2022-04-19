@@ -1,19 +1,19 @@
 import numpy as np
-from mlxtend.classifier import Adaline
-from numpy.random.mtrand import random
+# from numpy.random.mtrand import random
+from Adaline import Adaline
 
 DATA_SIZE = 1000
 
 
-def createData(debug=False):
+def PullSamples(data_size=DATA_SIZE, debug=False):
     np.random.seed(1)
-    x_int = np.random.randint(-100, 99, size=(DATA_SIZE, 2))  # a is a variable(object)
-    x_frac = np.round(np.random.rand(DATA_SIZE, 2), 2)
+    x_int = np.random.randint(-100, 99, size=(data_size, 2))
+    x_frac = np.round(np.random.rand(data_size, 2), 2)
     x = x_int + x_frac
 
-    y = np.empty(shape=[DATA_SIZE, 1])
+    y = np.empty(shape=[data_size, 1])
 
-    for i in range(DATA_SIZE):
+    for i in range(data_size):
         y[i] = 1 if x[i][1] > 1 else -1
 
     data = np.append(x, y, axis=1)
@@ -23,7 +23,7 @@ def createData(debug=False):
         print("y: \n", y, "\n")
         print("data: \n", data, "\n")
 
-    return data
+    return data, x, y
     # k = 0
     # for i in range(-H_RANGE, H_RANGE + 1):
     #     for j in range(-H_RANGE, H_RANGE + 1):
@@ -35,4 +35,6 @@ def createData(debug=False):
     # print(data)
 
 
-createData(True)
+_data, _x, _y = PullSamples(debug=True)
+classifier = Adaline().run(_x, _y)
+
