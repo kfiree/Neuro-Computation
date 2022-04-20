@@ -11,19 +11,19 @@ def PullSamples(data_size=DATA_SIZE, debug=False):
     x_frac = np.round(np.random.rand(data_size, 2), 2)
     x = x_int + x_frac
 
-    y = np.empty(shape=[data_size, 1])
+    y = np.empty(shape=[data_size ])
 
     for i in range(data_size):
         y[i] = 1 if x[i][1] > 1 else -1
 
-    data = np.append(x, y, axis=1)
+    # data = np.append(x, y, axis=1)
 
     if debug:
         print("x: \n", x, "\n")
         print("y: \n", y, "\n")
-        print("data: \n", data, "\n")
+        # print("data: \n", data, "\n")
 
-    return data, x, y
+    return  x, y
     # k = 0
     # for i in range(-H_RANGE, H_RANGE + 1):
     #     for j in range(-H_RANGE, H_RANGE + 1):
@@ -35,6 +35,6 @@ def PullSamples(data_size=DATA_SIZE, debug=False):
     # print(data)
 
 
-_data, _x, _y = PullSamples(debug=True)
-classifier = Adaline().run(_x, _y)
+_x, _y = PullSamples(data_size = 100000, debug=False)
+classifier = Adaline().train(_x, _y)
 
