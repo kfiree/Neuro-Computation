@@ -1,4 +1,4 @@
-from mlxtend.classifier import Adaline
+# from mlxtend.classifier import Adaline
 import numpy as np
 
 '''
@@ -17,9 +17,9 @@ class Adaline:
 
     def train(self, X, Y):
         # === NORMALIZE DATA ===
-        X = (X + 100) / 200
+        # X = (X + 100) / 200
         Y[Y==-1] = 0
-        # X = X/100
+        X = X/100
 
         row = X.shape[0]
         col = X.shape[1]
@@ -45,14 +45,15 @@ class Adaline:
 
             # === UPDATE WEIGHTS ===
 
-            # for i, (x_i, y_i) in enumerate(zip(X, Y)):
-            #     e = y_i - net_output[i]
-            #     print("weights: ", self.weights)
-            #     # print("a's addition", self.learning_rate * X.T.dot(np.subtract(activation_output, Y)))
-            #     print("addition", self.learning_rate * x_i.dot(square_error[i]))
-            #     self.weights += self.learning_rate * x_i.dot(square_error[i])
+            for i, (x_i, y_i) in enumerate(zip(X, Y)):
+                e = np.dot(x_i, self.weights) - y_i
+                # print("weights: ", self.weights)
+                # print("a's addition", self.learning_rate * X.T.dot(np.subtract(activation_output, Y)))
+                # print("addition", self.learning_rate * x_i.dot(square_error[i]))
+                print("weights: ", self.weights, ", addition: ", self.learning_rate * x_i.dot(e))
+                self.weights += self.learning_rate * x_i.dot(e)
 
-
+            print(self.weights, "\n")
             # e = Y - net_output
 
             # print("addition normal error ", self.learning_rate * X.T.dot(e))
@@ -60,16 +61,18 @@ class Adaline:
             # self.weights = self.weights + self.learning_rate * X.T.dot(square_error)
             # self.weights = self.weights + self.learning_rate * X.T.dot(e)
 
-            a = 0
-            for i, (x_i, y_i) in enumerate(zip(X, Y)):
-                a += (net_output[i] - y_i)*x_i
+            # a = 0
+            # for i, (x_i, y_i) in enumerate(zip(X, Y)):
+            #     a += ((net_output[i] - y_i) ** 2) * x_i
+            #     # a += ((net_output[i] - y_i)**2)*x_i
+            #
+            # a = a/((X.shape[0]))
+            # a = a/(2*(X.shape[0]))
 
-            a = a/(X.shape[0])
 
-            print("weights: ", self.weights, ", addition: ", self.learning_rate * a)
-            print()
+            # print()
 
-            self.weights = self.weights - self.learning_rate * a
+            # self.weights = self.weights + self.learning_rate * a
 
             # self.weights += self.learning_rate*(a)
 
@@ -91,8 +94,12 @@ class Adaline:
     def net_input(self, X):
         return np.dot(X, self.weights)
 
-    def predict(self, x):
-        return np.transpose(np.dot(x, self.weights))
+    def predict(self, X):
+        row = X.shape[0]
+        bias = np.ones((row, 1))
+        X = np.append(bias, X, axis=1)
+        return np.where(self.activation(self.net_input(X)) > 0.0, 1, 0)
+        # return np.transpose(np.dot(x, self.weights))
 
     # def _shuffle(self, X, y):
     #     per = np.random.permutation(len(y))
@@ -103,9 +110,11 @@ class Adaline:
 
 
     def score(self, X, y):
-        wrong_prediction = abs((self.predict(X) - y) / 2).sum()
-        self.score_ = (len(X) - wrong_prediction) / len(X)
-        return self.score_
+        missed_class = self.predict(X).sum()
+        return (y.shape[0] - missed_class)/y.shape[0]
+        # wrong_prediction = abs((self.predict(X) - y) / 2).sum()
+        # self.score_ = (len(X) - wrong_prediction) / len(X)
+        # return self.score_
 
 
 # new_weights[1:] = self.weights[1:] + self.learning_rate * X[1:].T.dot(square_error)

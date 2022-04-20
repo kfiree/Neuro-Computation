@@ -36,5 +36,8 @@ def PullSamples(data_size=DATA_SIZE, debug=False):
 
 
 _x, _y = PullSamples(data_size = 100000, debug=False)
-classifier = Adaline().train(_x, _y)
+model = Adaline().train(_x, _y)
+print("weights: ",model.weights)
+score = model.score(_x, _y)
+print(score)
 
