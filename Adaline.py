@@ -1,9 +1,12 @@
 import numpy as np
 from tqdm import trange
+from enum import Enum
 
 DATA_SIZE = 1000
 
-
+class Part(Enum):
+    A = 1
+    B = 2
 """
 TODO:
 - add the parts as enum
@@ -14,7 +17,7 @@ class Adaline:
     adaline algorithm with stochastic gradient descent
     """
 
-    def __init__(self, learning_rate=0.01, epochs=500, data_size=DATA_SIZE, part='A'):
+    def __init__(self, learning_rate=0.01, epochs=500, data_size=DATA_SIZE, part=Part.A):
         self.data_size = data_size
         self.part = part
         self.learning_rate = learning_rate
@@ -92,15 +95,16 @@ class Adaline:
 
         bias = np.ones((X.shape[0], 1))
         X = np.append(bias, X, axis=1)
-        if self.part == 'A':
+        if self.part == Part.A:
             return np.where(self.activation(self.net_input(X)) > 0.01, 1, -1)
-        X1 = X[:, 0] ** 2
-        X2 = X[:, 1] ** 2
-        sum = np.add(X1, X2)
-        y = np.empty(shape=[self.data_size])
-        for i in range(self.data_size):
-            y[i] = 1 if sum[i] >= 4 and sum[i] <= 9 else -1
-        return y
+        elif Part.B:
+            X1 = X[:, 0] ** 2
+            X2 = X[:, 1] ** 2
+            sum = np.add(X1, X2)
+            y = np.empty(shape=[self.data_size])
+            for i in range(self.data_size):
+                y[i] = 1 if sum[i] >= 4 and sum[i] <= 9 else -1
+            return y
 
 
     def test(self, X, y):
@@ -120,3 +124,5 @@ class Adaline:
     # def error(self, n, Y):
     #     # E = Σ (wi - xi)^2
     #     return np.square(np.subtract(n, Y))
+
+

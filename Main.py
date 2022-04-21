@@ -1,22 +1,23 @@
 import numpy as np
 # from numpy.random.mtrand import random
 from Adaline import Adaline
+from Adaline import Part
 
 DATA_SIZE = 1000
 
 
-def PullSamples(data_size=DATA_SIZE, debug=False, part = 'A'):
+def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.A):
     np.random.seed(1)
     x_int = np.random.randint(-100, 99, size=(data_size, 2))
     x_frac = np.round(np.random.rand(data_size, 2), 2)
     x = x_int + x_frac
 
     y = np.empty(shape=[data_size])
-    if part == 'A':
+    if part == Part.A:
         for i in range(data_size):
             y[i] = 1 if x[i][1] > 1 else -1
 
-    elif part == 'B':
+    elif part == Part.B:
         X1 = x[:, 0] ** 2
         X2 = x[:, 1] ** 2
         sum = np.add(X1, X2)
@@ -50,5 +51,5 @@ def partB(_x, _y, debug=False):
 
 _x, _y = PullSamples(debug=False)
 partA(_x, _y)
-_x, _y = PullSamples(debug=False, part='B')
+_x, _y = PullSamples(debug=False, part=Part.B)
 partB(_x, _y)
