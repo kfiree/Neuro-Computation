@@ -1,13 +1,22 @@
 import numpy as np
 from tqdm import trange
 
+DATA_SIZE = 1000
+
+
+"""
+TODO:
+- add the parts as enum
+"""
 class Adaline:
     """
             === ADALINE ALGORITHM ===
     adaline algorithm with stochastic gradient descent
     """
 
-    def __init__(self, learning_rate=0.01, epochs=500):
+    def __init__(self, learning_rate=0.01, epochs=500, data_size=DATA_SIZE, part='A'):
+        self.data_size = data_size
+        self.part = part
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.weights = []
@@ -80,9 +89,19 @@ class Adaline:
         :param X: net output
         :return: class prediction
         """
+
         bias = np.ones((X.shape[0], 1))
         X = np.append(bias, X, axis=1)
-        return np.where(self.activation(self.net_input(X)) > 0.01, 1, -1)
+        if self.part == 'A':
+            return np.where(self.activation(self.net_input(X)) > 0.01, 1, -1)
+        X1 = X[:, 0] ** 2
+        X2 = X[:, 1] ** 2
+        sum = np.add(X1, X2)
+        y = np.empty(shape=[self.data_size])
+        for i in range(self.data_size):
+            y[i] = 1 if sum[i] >= 4 and sum[i] <= 9 else -1
+        return y
+
 
     def test(self, X, y):
         """
