@@ -107,6 +107,7 @@ class Adaline:
             return y
 
 
+
     def test(self, X, y):
         """
 
@@ -118,8 +119,54 @@ class Adaline:
         for pred_i, y_i in zip(self.predict(X), y):
             if y_i != pred_i:
                 missed_class += 1
-
         return (y.shape[0] - missed_class) / (X.shape[0])
+
+    def splitAsWeClass(self, _x, y):
+        """
+
+        :param X: data samples.
+        :param y: targets
+        :return: percentage of success
+        """
+        wrong_x = []
+        wrong_y = []
+        right_x = []
+        right_y = []
+        i=0
+        for pred_i, y_i in zip(self.predict(_x), y):
+            if y_i != pred_i:
+                wrong_x.append(_x[i][0])
+                wrong_y.append(_x[i][1])
+            else:
+                right_x.append(_x[i][0])
+                right_y.append(_x[i][1])
+            i += 1
+
+        return wrong_x, wrong_y, right_x, right_y
+
+
+    def splitAsShouldBe(self, _x, y):
+        """
+
+        :param X: data samples.
+        :param y: targets
+        :return: percentage of success
+        """
+        neg_x = []
+        neg_y = []
+        pos_x = []
+        pos_y = []
+        i=0
+        for pred_i, y_i in zip(self.predict(_x), y):
+            if y_i == 1:
+                neg_x.append(_x[i][0])
+                neg_y.append(_x[i][1])
+            else:
+                pos_x.append(_x[i][0])
+                pos_y.append(_x[i][1])
+            i += 1
+
+        return neg_x, neg_y, pos_x, pos_y
 
     # def error(self, n, Y):
     #     # E = Σ (wi - xi)^2
