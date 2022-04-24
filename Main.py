@@ -45,6 +45,7 @@ def partA(_x, _y, debug=False):
     if debug:
         print("weights: ", model.weights)
     print("score: ", score*100, "% success")
+    return model
 
 def partB(_x, _y, debug=False):
     model = Adaline(part = 'B').train(_x, _y, debug=debug)
@@ -53,21 +54,52 @@ def partB(_x, _y, debug=False):
     if debug:
         print("weights: ", model.weights)
     print("score: ", score*100, "% success")
+    return model
 
-_x, _y = PullSamples(debug=False, part=Part.B)
-model = Adaline(part='B').train(_x, _y)
-neg_x, neg_y, pos_x, pos_y = model.splitAsShouldBe(_x, _y)
-plt.scatter(pos_x, pos_y, label="stars", color="green",
-            marker= "*", s=30)
-plt.scatter(neg_x, neg_y, label="stars", color="red",
-            marker= "*", s=30)
-plt.xlabel('x - axis')
-plt.ylabel('y - axis')
-plt.title("just showing points")
-plt.show()
 
+
+
+def showResults(_x, _y, part = Part.A):
+    model = partA(_x, _y)
+    yb = -model.weights[0]/ model.weights[2]
+    ym = -model.weights[1]/ model.weights[2]
+
+    # xb = -model.weights[0]/ model.weights[1]
+    # xm = -model.weights[2]/ model.weights[1]
+
+    x = [-100, 100]
+    y = [-100*ym +yb, 100*ym +yb]
+
+    # if  -100*ym +yb>= -100:
+    #     y[0] = -100*ym +yb
+    #
+    # else:
+    #     x[0] = -100*xm +xb
+    #
+    # if 100 * ym + yb < 100:
+    #     y[0] = 100 * ym + yb
+    #
+    # else:
+    #     x[0] = 100 * xm + xb
+
+    plt.plot(x, y)
+    neg_x, neg_y, pos_x, pos_y = model.splitAsShouldBe(_x, _y)
+    plt.scatter(pos_x, pos_y, label="stars", color="green",
+                marker= "*", s=30)
+    plt.scatter(neg_x, neg_y, label="stars", color="red",
+                marker= "*", s=30)
+    plt.xlabel('x - axis')
+    plt.ylabel('y - axis')
+    plt.title("just showing points")
+
+    plt.xlim(_x[: , 0].min(), _x[: , 0].max())
+    plt.ylim(_x[: , 1].min(), _x[: , 1].max())
+    plt.show()
+
+_x, _y = PullSamples(debug=False)
+showResults(_x, _y)
 
 # _x, _y = PullSamples(debug=False)
 # partA(_x, _y)
-_x, _y = PullSamples(debug=False, part=Part.B)
-partB(_x, _y)
+# _x, _y = PullSamples(debug=False, part=Part.B)
+# partB(_x, _y)
