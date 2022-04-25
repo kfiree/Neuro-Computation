@@ -7,6 +7,7 @@ DATA_SIZE = 1000
 class Part(Enum):
     A = 1
     B = 2
+
 """
 TODO:
 - add the parts as enum
