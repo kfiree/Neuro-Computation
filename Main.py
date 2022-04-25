@@ -60,7 +60,7 @@ def partB(_x, _y, debug=False):
 
 
 def showResults(_x, _y, part = Part.A):
-    model = partA(_x, _y)
+    model = partB(_x, _y)
     yb = -model.weights[0]/ model.weights[2]
     ym = -model.weights[1]/ model.weights[2]
 
@@ -96,10 +96,11 @@ def showResults(_x, _y, part = Part.A):
     plt.ylim(_x[: , 1].min(), _x[: , 1].max())
     plt.show()
 
-_x, _y = PullSamples(debug=False)
-showResults(_x, _y)
+# _x, _y = PullSamples(debug=False)
+# showResults(_x, _y)
 
 # _x, _y = PullSamples(debug=False)
 # partA(_x, _y)
-# _x, _y = PullSamples(debug=False, part=Part.B)
+_x, _y = PullSamples(debug=False, part=Part.B)
+showResults(_x, _y)
 # partB(_x, _y)
