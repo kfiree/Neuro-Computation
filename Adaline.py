@@ -104,7 +104,7 @@ class Adaline:
             sum = np.add(X1, X2)
             y = np.empty(shape=[self.data_size])
             for i in range(self.data_size):
-                y[i] = 1 if sum[i] >= 4 and sum[i] <= 9 else -1
+                y[i] = 1 if sum[i] >= 0.04 and sum[i] <= 0.09 else -1
             return y
 
 

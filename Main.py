@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 DATA_SIZE = 1000
 
 
-def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.A):
+def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.B):
     np.random.seed(1)
     x_int = np.random.randint(-100, 99, size=(data_size, 2))
     x_frac = np.round(np.random.rand(data_size, 2), 2)
@@ -27,7 +27,7 @@ def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.A):
         X2 = x[:, 1] ** 2
         sum = np.add(X1, X2)
         for i in range(data_size):
-            y[i] = 1 if sum[i] >= 4 and sum[i] <= 9 else -1
+            y[i] = 1 if sum[i] >= 0.04 and sum[i] <= 0.09 else -1
 
     if debug:
         print("x: \n", x, "\n")
@@ -36,7 +36,7 @@ def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.A):
 
     return x, y
 
-def calculateResults(_x, _y, debug=False, part = Part.A):
+def calculateResults(_x, _y, debug=False, part = Part.B):
     model = Adaline(part = part).train(_x, _y, debug=debug)
     score = model.test(_x, _y)
     print("     PART ",part.name,"      ")
@@ -66,7 +66,7 @@ def calculateResults(_x, _y, debug=False, part = Part.A):
 
 
 
-def showResults(_x, _y, part = Part.A):
+def showResults(_x, _y, part = Part.B):
     # if part == Part.A:
     #         model = partA(_x, _y)
     # elif part == Part.B:
@@ -93,7 +93,7 @@ def showResults(_x, _y, part = Part.A):
     plt.show()
 
 _x, _y = PullSamples(debug=False)
-showResults(_x, _y)
+showResults(_x, _y, part=Part.B)
 
 # _x, _y = PullSamples(debug=False)
 # partA(_x, _y)
