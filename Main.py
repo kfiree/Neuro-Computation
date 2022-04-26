@@ -8,14 +8,11 @@ import matplotlib.pyplot as plt
 DATA_SIZE = 1000
 
 
-def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.B):
+def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.A):
     np.random.seed(1)
     x_int = np.random.randint(-100, 99, size=(data_size, 2))
     x_frac = np.round(np.random.rand(data_size, 2), 2)
     x = x_int + x_frac
-
-    # x[0][0] = 2
-    # x[0][1] = 2
 
     y = np.empty(shape=[data_size])
     if part == Part.A:
@@ -36,7 +33,7 @@ def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.B):
 
     return x, y
 
-def calculateResults(_x, _y, debug=False, part = Part.B):
+def calculateResults(_x, _y, debug=False, part = Part.A):
     model = Adaline(part = part).train(_x, _y, debug=debug)
     score = model.test(_x, _y)
     print("     PART ",part.name,"      ")
@@ -45,33 +42,9 @@ def calculateResults(_x, _y, debug=False, part = Part.B):
     print("score: ", score*100, "% success")
     return model
 
-# def partA(_x, _y, debug=False):
-#     model = Adaline().train(_x, _y, debug=debug)
-#     score = model.test(_x, _y)
-#     print("     PART ",Part.A.name,"      ")
-#     if debug:
-#         print("weights: ", model.weights)
-#     print("score: ", score*100, "% success")
-#     return model
-#
-# def partB(_x, _y, debug=False):
-#     model = Adaline(part = 'B').train(_x, _y, debug=debug)
-#     score = model.test(_x, _y)
-#     print("     PART ",Part.B.name,"      ")
-#     if debug:
-#         print("weights: ", model.weights)
-#     print("score: ", score*100, "% success")
-#     return model
 
-
-
-
-def showResults(_x, _y, part = Part.B):
-    # if part == Part.A:
-    #         model = partA(_x, _y)
-    # elif part == Part.B:
-    #         model = partB(_x, _y)
-    model = calculateResults(_x, _y, part=part, debug=False)
+def showResults(_x, _y, p = Part.A):
+    model = calculateResults(_x, _y, part=p, debug=False)
     b = -model.weights[0]/ model.weights[2]
     m = -model.weights[1]/ model.weights[2]
 
@@ -85,17 +58,14 @@ def showResults(_x, _y, part = Part.B):
                 marker= "*", s=30)
     plt.xlabel('x - axis')
     plt.ylabel('y - axis')
-    # str= "PART "+part.name+": Adaline Algorithm\n"+DATA_SIZE+ " samples "+ model.learning_rate+ " learning rate"
-    plt.title("need to be fixed")
+    s= "PART " + p.name + ": Adaline Algorithm\n" + str(model.data_size) + " samples " + str(model.learning_rate) + " learning rate"
+    plt.title(s)
 
     plt.xlim(_x[: , 0].min(), _x[: , 0].max())
     plt.ylim(_x[: , 1].min(), _x[: , 1].max())
     plt.show()
 
-_x, _y = PullSamples(debug=False)
-showResults(_x, _y, part=Part.B)
+part = Part.B
+_x, _y = PullSamples(debug=False, part=part)
+showResults(_x, _y, part)
 
-# _x, _y = PullSamples(debug=False)
-# partA(_x, _y)
-# _x, _y = PullSamples(debug=False, part=Part.B)
-# partB(_x, _y)

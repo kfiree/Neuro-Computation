@@ -98,7 +98,7 @@ class Adaline:
         X = np.append(bias, X, axis=1)
         if self.part == Part.A:
             return np.where(self.activation(self.net_input(X)) > 0.01, 1, -1)
-        elif Part.B:
+        elif self.part ==Part.B:
             X1 = X[:, 0] ** 2
             X2 = X[:, 1] ** 2
             sum = np.add(X1, X2)
