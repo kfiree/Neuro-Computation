@@ -4,11 +4,10 @@ from Adaline import Adaline
 from Adaline import Part
 import matplotlib.pyplot as plt
 
-
 DATA_SIZE = 1000
 
 
-def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.A):
+def PullSamples(data_size=DATA_SIZE, debug=False, part=Part.A):
     np.random.seed(1)
     x_int = np.random.randint(-100, 99, size=(data_size, 2))
     x_frac = np.round(np.random.rand(data_size, 2), 2)
@@ -37,64 +36,61 @@ def PullSamples(data_size=DATA_SIZE, debug=False, part = Part.A):
     return x, y
 
 
-
-def partA(_x, _y, debug=False):
-    model = Adaline().train(_x, _y, debug=debug)
+def calculateResults(_x, _y, debug=False, part=Part.A):
+    model = Adaline(part=part).train(_x, _y, debug=debug)
     score = model.test(_x, _y)
-    print("     PART A      ")
+    print("     PART ", part.name, "      ")
     if debug:
         print("weights: ", model.weights)
-    print("score: ", score*100, "% success")
-    return model
-
-def partB(_x, _y, debug=False):
-    model = Adaline(part = 'B').train(_x, _y, debug=debug)
-    score = model.test(_x, _y)
-    print("     PART B      ")
-    if debug:
-        print("weights: ", model.weights)
-    print("score: ", score*100, "% success")
+    print("score: ", score * 100, "% success")
     return model
 
 
+# def partA(_x, _y, debug=False):
+#     model = Adaline().train(_x, _y, debug=debug)
+#     score = model.test(_x, _y)
+#     print("     PART ",Part.A.name,"      ")
+#     if debug:
+#         print("weights: ", model.weights)
+#     print("score: ", score*100, "% success")
+#     return model
+#
+# def partB(_x, _y, debug=False):
+#     model = Adaline(part = 'B').train(_x, _y, debug=debug)
+#     score = model.test(_x, _y)
+#     print("     PART ",Part.B.name,"      ")
+#     if debug:
+#         print("weights: ", model.weights)
+#     print("score: ", score*100, "% success")
+#     return model
 
 
-def showResults(_x, _y, part = Part.A):
-    model = partB(_x, _y)
-    yb = -model.weights[0]/ model.weights[2]
-    ym = -model.weights[1]/ model.weights[2]
-
-    # xb = -model.weights[0]/ model.weights[1]
-    # xm = -model.weights[2]/ model.weights[1]
+def showResults(_x, _y, part=Part.A):
+    # if part == Part.A:
+    #         model = partA(_x, _y)
+    # elif part == Part.B:
+    #         model = partB(_x, _y)
+    model = calculateResults(_x, _y, part=part, debug=False)
+    b = -model.weights[0] / model.weights[2]
+    m = -model.weights[1] / model.weights[2]
 
     x = [-100, 100]
-    y = [-100*ym +yb, 100*ym +yb]
-
-    # if  -100*ym +yb>= -100:
-    #     y[0] = -100*ym +yb
-    #
-    # else:
-    #     x[0] = -100*xm +xb
-    #
-    # if 100 * ym + yb < 100:
-    #     y[0] = 100 * ym + yb
-    #
-    # else:
-    #     x[0] = 100 * xm + xb
-
+    y = [-100 * m + b, 100 * m + b]
     plt.plot(x, y)
     neg_x, neg_y, pos_x, pos_y = model.splitAsShouldBe(_x, _y)
-    plt.scatter(pos_x, pos_y, label="stars", color="green",
-                marker= "*", s=30)
-    plt.scatter(neg_x, neg_y, label="stars", color="red",
-                marker= "*", s=30)
+    plt.scatter(pos_x, pos_y, label="stars", color="green", marker="*", s=30)
+    plt.scatter(neg_x, neg_y, label="stars", color="red", marker="*", s=30)
     plt.xlabel('x - axis')
     plt.ylabel('y - axis')
-    plt.title("just showing points")
+    a = "PART " + part.name + ": Adaline Algorithm\n" + str(DATA_SIZE) + " samples " + str(
+        model.learning_rate) + " learning rate."
 
-    plt.xlim(_x[: , 0].min(), _x[: , 0].max())
-    plt.ylim(_x[: , 1].min(), _x[: , 1].max())
+    plt.title(a)
+
+    plt.xlim(_x[:, 0].min(), _x[:, 0].max())
+    plt.ylim(_x[:, 1].min(), _x[:, 1].max())
     plt.show()
+
 
 # _x, _y = PullSamples(debug=False)
 # showResults(_x, _y)
