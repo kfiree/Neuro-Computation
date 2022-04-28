@@ -1,8 +1,5 @@
 import numpy as np
 # from numpy.random.mtrand import random
-from rich.console import Console
-from rich.table import Table
-from rich import print as rprint
 from Adaline import Adaline
 from Adaline import Part
 import matplotlib.pyplot as plt
