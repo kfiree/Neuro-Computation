@@ -1,8 +1,4 @@
 import numpy as np
-# from numpy.random.mtrand import random
-from rich.console import Console
-from rich.table import Table
-from rich import print as rprint
 from Adaline import Adaline
 from Adaline import Part
 import matplotlib.pyplot as plt
@@ -12,9 +8,17 @@ DATA_SIZE = 1000
 def paintRed(msg): return "\033[91m {}\033[00m".format(msg)
 def paintGreen(msg): return "\033[92m {}\033[00m".format(msg)
 
+
+# add shuffle
+
 def generateSamples(data_size=DATA_SIZE, debug=False, part=Part.A):
     np.random.seed(1)
     x_int = np.random.randint(-100, 99, size=(data_size, 2))
+    if part==Part.B:
+        i = np.random.randint(0, 199)
+        x_int[i][0] = 1
+        x_int[i][1] = 1
+
     x_frac = np.round(np.random.rand(data_size, 2), 2)
     x = x_int + x_frac
 
@@ -28,7 +32,7 @@ def generateSamples(data_size=DATA_SIZE, debug=False, part=Part.A):
         X2 = x[:, 1] ** 2
         sum = np.add(X1, X2)
         for i in range(data_size):
-            y[i] = 1 if sum[i] >= 0.04 and sum[i] <= 0.09 else -1
+            y[i] = 1 if sum[i] >= 4 and sum[i] <= 9 else -1
 
     if debug:
         print("x: \n", x, "\n")
