@@ -4,14 +4,18 @@ from enum import Enum
 
 DATA_SIZE = 1000
 
+
 class Part(Enum):
     A = 1
     B = 2
+
 
 """
 TODO:
 - add the parts as enum
 """
+
+
 class Adaline:
     """
             === ADALINE ALGORITHM ===
@@ -57,10 +61,8 @@ class Adaline:
 
                 self.weights += self.learning_rate * x_i.dot(error_i)
 
-
             self.costs.append(epoch_errors_sum)
             # print(epoch_errors_sum)
-
 
         return self
 
@@ -115,7 +117,7 @@ class Adaline:
         X = np.append(bias, X, axis=1)
         if self.part == Part.A:
             return np.where(self.activation(self.net_input(X)) > 0.01, 1, -1)
-        elif self.part ==Part.B:
+        elif self.part == Part.B:
             X1 = X[:, 0] ** 2
             X2 = X[:, 1] ** 2
             sum = np.add(X1, X2)
@@ -123,8 +125,6 @@ class Adaline:
             for i in range(self.data_size):
                 y[i] = 1 if sum[i] >= 0.04 and sum[i] <= 0.09 else -1
             return y
-
-
 
     def test(self, X, y):
         """
@@ -159,7 +159,7 @@ class Adaline:
         wrong_y = []
         right_x = []
         right_y = []
-        i=0
+        i = 0
         for pred_i, y_i in zip(self.predict(_x), y):
             if y_i != pred_i:
                 wrong_x.append(_x[i][0])
@@ -170,7 +170,6 @@ class Adaline:
             i += 1
 
         return wrong_x, wrong_y, right_x, right_y
-
 
     def splitAsShouldBe(self, _x, y):
         """
@@ -183,7 +182,7 @@ class Adaline:
         neg_y = []
         pos_x = []
         pos_y = []
-        i=0
+        i = 0
         for pred_i, y_i in zip(self.predict(_x), y):
             if y_i == 1:
                 neg_x.append(_x[i][0])
@@ -198,5 +197,3 @@ class Adaline:
     # def error(self, n, Y):
     #     # E = Σ (wi - xi)^2
     #     return np.square(np.subtract(n, Y))
-
-
