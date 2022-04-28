@@ -1,20 +1,22 @@
 import numpy as np
 # from numpy.random.mtrand import random
+from rich.console import Console
+from rich.table import Table
+from rich import print as rprint
 from Adaline import Adaline
 from Adaline import Part
 import matplotlib.pyplot as plt
 
 DATA_SIZE = 1000
 
+def paintRed(msg): return "\033[91m {}\033[00m".format(msg)
+def paintGreen(msg): return "\033[92m {}\033[00m".format(msg)
 
-def PullSamples(data_size=DATA_SIZE, debug=False, part=Part.A):
+def generateSamples(data_size=DATA_SIZE, debug=False, part=Part.A):
     np.random.seed(1)
     x_int = np.random.randint(-100, 99, size=(data_size, 2))
     x_frac = np.round(np.random.rand(data_size, 2), 2)
     x = x_int + x_frac
-
-    # x[0][0] = 2
-    # x[0][1] = 2
 
     y = np.empty(shape=[data_size])
     if part == Part.A:
@@ -26,7 +28,7 @@ def PullSamples(data_size=DATA_SIZE, debug=False, part=Part.A):
         X2 = x[:, 1] ** 2
         sum = np.add(X1, X2)
         for i in range(data_size):
-            y[i] = 1 if sum[i] >= 4 and sum[i] <= 9 else -1
+            y[i] = 1 if sum[i] >= 0.04 and sum[i] <= 0.09 else -1
 
     if debug:
         print("x: \n", x, "\n")
@@ -38,39 +40,30 @@ def PullSamples(data_size=DATA_SIZE, debug=False, part=Part.A):
 
 def calculateResults(_x, _y, debug=False, part=Part.A):
     model = Adaline(part=part).train(_x, _y, debug=debug)
-    score = model.test(_x, _y)
-    print("     PART ", part.name, "      ")
+    false_negative, false_positive, true_negative, true_positive = model.test(_x, _y)
+
+    print("                PART ", part.name,
+          "\n               --------")
     if debug:
         print("weights: ", model.weights)
-    print("score: ", score * 100, "% success")
+
+    # Confusion Matrix
+
+    print("\n           Confusion Matrix:",
+          "\n         ===================\n",
+          paintGreen("True positive:"), true_positive, paintRed("False positive:"), false_positive,"\n",
+          paintRed("False_negative:"), false_negative, paintGreen("True negative:"), true_negative)
+
+    missed_class = false_positive + false_negative
+    score = (DATA_SIZE - missed_class) / DATA_SIZE
+    print("\n         \033[1mAccuracy:\033[0m ", score * 100, "% success")
+
     return model
 
 
-# def partA(_x, _y, debug=False):
-#     model = Adaline().train(_x, _y, debug=debug)
-#     score = model.test(_x, _y)
-#     print("     PART ",Part.A.name,"      ")
-#     if debug:
-#         print("weights: ", model.weights)
-#     print("score: ", score*100, "% success")
-#     return model
-#
-# def partB(_x, _y, debug=False):
-#     model = Adaline(part = 'B').train(_x, _y, debug=debug)
-#     score = model.test(_x, _y)
-#     print("     PART ",Part.B.name,"      ")
-#     if debug:
-#         print("weights: ", model.weights)
-#     print("score: ", score*100, "% success")
-#     return model
 
-
-def showResults(_x, _y, part=Part.A):
-    # if part == Part.A:
-    #         model = partA(_x, _y)
-    # elif part == Part.B:
-    #         model = partB(_x, _y)
-    model = calculateResults(_x, _y, part=part, debug=False)
+def showResults(_x, _y, p=Part.A):
+    model = calculateResults(_x, _y, part=p, debug=False)
     b = -model.weights[0] / model.weights[2]
     m = -model.weights[1] / model.weights[2]
 
@@ -82,21 +75,53 @@ def showResults(_x, _y, part=Part.A):
     plt.scatter(neg_x, neg_y, label="stars", color="red", marker="*", s=30)
     plt.xlabel('x - axis')
     plt.ylabel('y - axis')
-    a = "PART " + part.name + ": Adaline Algorithm\n" + str(DATA_SIZE) + " samples " + str(
-        model.learning_rate) + " learning rate."
 
-    plt.title(a)
+    title = "PART " + p.name + ": Adaline Algorithm\n" + str(model.data_size) + " samples " + str(
+        model.learning_rate) + " learning rate"
+    plt.title(title)
+
 
     plt.xlim(_x[:, 0].min(), _x[:, 0].max())
     plt.ylim(_x[:, 1].min(), _x[:, 1].max())
     plt.show()
 
+    plt.plot(model.costs, '-b', label="loss")
+    plt.xlabel("n epoch")
+    plt.legend(loc='upper left')
+    plt.title("Loss progrees")
 
-# _x, _y = PullSamples(debug=False)
-# showResults(_x, _y)
 
-# _x, _y = PullSamples(debug=False)
-# partA(_x, _y)
-_x, _y = PullSamples(debug=False, part=Part.B)
-showResults(_x, _y)
-# partB(_x, _y)
+    # plt.plot(model.costs)
+    plt.show()
+
+def run(part):
+    part = part
+    _x, _y = generateSamples(debug=False, part=part)
+    showResults(_x, _y, part)
+
+
+run(Part.A)
+run(Part.B)
+
+
+
+
+
+
+
+def prYellow(msg): print("\033[93m {}\033[00m".format(msg))
+
+
+def prLightPurple(msg): print("\033[94m {}\033[00m".format(msg))
+
+
+def prPurple(msg): print("\033[95m {}\033[00m".format(msg))
+
+
+def prCyan(msg): print("\033[96m {}\033[00m".format(msg))
+
+
+def prLightGray(msg): print("\033[97m {}\033[00m".format(msg))
+
+
+def prBlack(msg): print("\033[98m {}\033[00m".format(msg))

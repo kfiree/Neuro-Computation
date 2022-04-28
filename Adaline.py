@@ -18,13 +18,13 @@ class Adaline:
     adaline algorithm with stochastic gradient descent
     """
 
-    def __init__(self, learning_rate=0.01, epochs=500, data_size=DATA_SIZE, part=Part.A):
+    def __init__(self, learning_rate=0.01, epochs=50, data_size=DATA_SIZE, part=Part.A):
         self.data_size = data_size
         self.part = part
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.weights = []
-        # self.cost_ = []
+        self.costs = []
 
     def train(self, X, Y, debug=False):
         """
@@ -46,12 +46,21 @@ class Adaline:
         ''' STOCHASTIC GRADIENT DESCENT
             for 'epochs' times, run over the data and update weights with each data sample '''
         for _ in trange(self.epochs, desc="Training model", unit="epochs"):
+            epoch_errors_sum = 0
             for i, (x_i, y_i) in enumerate(zip(X, Y)):
                 net_output_i = self.net_input(x_i)
                 error_i = np.subtract(y_i, net_output_i)
+                epoch_errors_sum += abs(error_i)
+                # self.costs.append(abs(error_i))
                 if debug:
                     print("weights: ", self.weights, ", addition: ", self.learning_rate * x_i.dot(error_i))
+
                 self.weights += self.learning_rate * x_i.dot(error_i)
+
+
+            self.costs.append(epoch_errors_sum)
+            # print(epoch_errors_sum)
+
 
         return self
 
@@ -69,6 +78,14 @@ class Adaline:
         X = np.append(bias, X, axis=1)
 
         return X
+
+    def check_w(self, X, Y):
+        errors_sum = 0
+        for i, (x_i, y_i) in enumerate(zip(X, Y)):
+            net_output_i = self.net_input(x_i)
+            errors_sum += abs(np.subtract(y_i, net_output_i))
+        # print(errors_sum)
+        return errors_sum
 
     def net_input(self, X):
         """
@@ -98,13 +115,13 @@ class Adaline:
         X = np.append(bias, X, axis=1)
         if self.part == Part.A:
             return np.where(self.activation(self.net_input(X)) > 0.01, 1, -1)
-        elif Part.B:
+        elif self.part ==Part.B:
             X1 = X[:, 0] ** 2
             X2 = X[:, 1] ** 2
             sum = np.add(X1, X2)
             y = np.empty(shape=[self.data_size])
             for i in range(self.data_size):
-                y[i] = 1 if sum[i] >= 4 and sum[i] <= 9 else -1
+                y[i] = 1 if sum[i] >= 0.04 and sum[i] <= 0.09 else -1
             return y
 
 
@@ -116,11 +133,20 @@ class Adaline:
         :param y: targets
         :return: percentage of success
         """
-        missed_class = 0
+        false_negative, false_positive, true_negative, true_positive = 0, 0, 0, 0
+
         for pred_i, y_i in zip(self.predict(X), y):
-            if y_i != pred_i:
-                missed_class += 1
-        return (y.shape[0] - missed_class) / (X.shape[0])
+            if pred_i < y_i:
+                false_negative += 1
+            elif pred_i > y_i:
+                false_positive += 1
+            else:
+                if pred_i == y_i == -1:
+                    true_negative += 1
+                else:
+                    true_positive += 1
+
+        return false_negative, false_positive, true_negative, true_positive
 
     def splitAsWeClass(self, _x, y):
         """
