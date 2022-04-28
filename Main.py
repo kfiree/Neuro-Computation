@@ -8,13 +8,10 @@ DATA_SIZE = 1000
 def paintRed(msg): return "\033[91m {}\033[00m".format(msg)
 def paintGreen(msg): return "\033[92m {}\033[00m".format(msg)
 
-
-# add shuffle
-
 def generateSamples(data_size=DATA_SIZE, debug=False, part=Part.A):
     np.random.seed(1)
     x_int = np.random.randint(-100, 99, size=(data_size, 2))
-    if part==Part.B:
+    if part == Part.B:
         i = np.random.randint(0, 199)
         x_int[i][0] = 1
         x_int[i][1] = 1
@@ -92,7 +89,11 @@ def showResults(_x, _y, p=Part.A):
     plt.plot(model.costs, '-b', label="loss")
     plt.xlabel("n epoch")
     plt.legend(loc='upper left')
-    plt.title("Loss progrees")
+    title = "PART " + p.name + ": Loss progrees\n" + str(model.data_size) + " samples " + str(
+        model.learning_rate) + " learning rate"
+    plt.title(title)
+
+    print("final weights: ",model.weights)
 
 
     # plt.plot(model.costs)

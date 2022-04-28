@@ -9,13 +9,6 @@ class Part(Enum):
     A = 1
     B = 2
 
-
-"""
-TODO:
-- add the parts as enum
-"""
-
-
 class Adaline:
     """
             === ADALINE ALGORITHM ===
