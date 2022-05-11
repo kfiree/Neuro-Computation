@@ -162,11 +162,17 @@ def showResults(_x, _y, model, p=Part.A):
     plt.show()
 
 
-def with_adaline(clf, part):
+def with_adaline(clf, X, y, X2, y2, part):
     """
     prepares the data to run in adaline
     and prints the results of the run in adaline with the transformed data
     :param clf: the plot_classifier to run the data through
+    :param X:  as
+    :param y:  sad
+    :param X2:  asd
+    :param y2:  asd
+    :param part:  asd
+    :return:
     """
     X_clf_output = []
     for layer_index in range(1, clf.n_layers_):
@@ -200,8 +206,8 @@ def plot_classifier(clf, X, y):
 
 
 if __name__ == '__main__':
-    X, y = generateSamples()
-    X2, y2 = generateSamples()
+    X1, y1 = generateSamples()
+    X12, y12 = generateSamples()
     X_c, y_c = generateSamples(DATA_SIZE, False, Part.B)
     X2_c, y2_c = generateSamples(DATA_SIZE, False, Part.B)
     # Part A
@@ -229,5 +235,5 @@ if __name__ == '__main__':
     plt.show()
 
     # with adaline
-    with_adaline(clf_a, Part.A)
-    with_adaline(clf_b, Part.B)
+    with_adaline(clf_a, X1, y1, X12, y12, Part.A)
+    with_adaline(clf_b, X_c, y_c, X2_c, y2_c, Part.B)
