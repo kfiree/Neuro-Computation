@@ -48,9 +48,9 @@ def generateSamples(data_size=DATA_SIZE, debug=False, part=Part.A):
     return X, y
 
 
-def forward_prop(clf, input, layers=None):
-    if layers is None or layers == 0:
-        layers = clf.n_layers_
+def forward_prop(clf, input, layers, for_adaline=False):
+    # if layers is None or layers == 0:
+    #     layers = clf.n_layers_
     # create first layer without any activation, cause input layer
     data = input
     # get the activation function, as writen in
@@ -66,6 +66,8 @@ def forward_prop(clf, input, layers=None):
 
     # if not at the end of neural-network then re-label the output
     if data.shape[1] > 1:
+        if for_adaline:
+            return data
         return np.array([clf._label_binarizer.inverse_transform(data[:, i]) for i in range(data.shape[1])])
     activation_function(data)
     return clf._label_binarizer.inverse_transform(data)
@@ -82,7 +84,7 @@ def plot_neuron(X, layer_i, index_neuron, neuron):
 
     plt.legend(loc='upper left')
     plt.title("Layer: " + str(layer_i) + " Neuron: " + str(index_neuron))
-    plt.savefig(f'layer_{str(layer_i)}_neuron_{str(index_neuron)}.png')
+    # plt.savefig(f'layer_{str(layer_i)}_neuron_{str(index_neuron)}.png')
     plt.show()
 
 
@@ -141,7 +143,8 @@ def showResults(_x, _y, model, p=Part.A):
 
     plt.xlim(_x[:, 0].min(), _x[:, 0].max())
     plt.ylim(_x[:, 1].min(), _x[:, 1].max())
-    plt.savefig(f'PART_{p.name}_adaline_algorithm_{str(model.data_size)}_samples_{str(model.learning_rate)}_learning_rate.png')
+    # plt.savefig(
+    #     f'PART_{p.name}_adaline_algorithm_{str(model.data_size)}_samples_{str(model.learning_rate)}_learning_rate.png')
     plt.show()
 
     plt.plot(model.costs, '-b', label="loss")
@@ -154,7 +157,8 @@ def showResults(_x, _y, model, p=Part.A):
     print("final weights: ", model.weights)
 
     # plt.plot(model.costs)
-    plt.savefig(f'PART_{p.name}_loss_progrees_{str(model.data_size)}_samples_{str(model.learning_rate)}_learning_rate.png')
+    # plt.savefig(
+    #     f'PART_{p.name}_loss_progrees_{str(model.data_size)}_samples_{str(model.learning_rate)}_learning_rate.png')
     plt.show()
 
 
@@ -168,8 +172,8 @@ def with_adaline(clf, part):
     for layer_index in range(1, clf.n_layers_):
         layer_i = forward_prop(clf, X, layer_index)
         if layer_index == clf.n_layers_ - 1:
-            X_clf_output = layer_i
-        # plot_layers(clf, X, layer_index - 1, layer_i)
+            X_clf_output = forward_prop(clf, X, layer_index, for_adaline=True)
+        plot_layers(clf, X, layer_index - 1, layer_i)
     X_clf_output = np.array([X_clf_output[0], X_clf_output[1]]).T
     model = Adaline(data_size=DATA_SIZE, part=Part.A)
     model.train(X_clf_output, y, debug=False)
@@ -192,6 +196,7 @@ def plot_classifier(clf, X, y):
             plot_layers(clf, X, index - 1, layer_i, True)
         else:
             plot_layers(clf, X, index - 1, layer_i)
+    print(clf.score(X, y))
 
 
 if __name__ == '__main__':
@@ -203,27 +208,26 @@ if __name__ == '__main__':
     clf_a = MLPClassifier(activation='logistic', learning_rate_init=0.1,
                           hidden_layer_sizes=(8, 2), random_state=1, max_iter=150)
     clf_a.fit(X, y)
-    # plot_classifier(clf_a, X, y)
-    # cm = confusion_matrix(y2, clf_a.predict(X2))
-    # disp = ConfusionMatrixDisplay(confusion_matrix=cm,display_labels = clf_a.classes_)
-    # disp.plot()
-    # plt.savefig("confusion_matrix.png")
 
+    plot_classifier(clf_a, X, y)
+    cm = confusion_matrix(y2, clf_a.predict(X2))
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=clf_a.classes_)
+    disp.plot()
 
-    # plt.show()
+    plt.show()
 
     # # Part B
-    # clf_b = MLPClassifier(activation='logistic', learning_rate_init=0.1,
-    #                       hidden_layer_sizes=(8, 2), random_state=1, max_iter=150)
-    # clf_b.fit(X_c, y_c)
-    # plot_classifier(clf_b, X_c, y_c)
-    # cm = confusion_matrix(y2_c, clf_b.predict(X2_c))
-    # disp = ConfusionMatrixDisplay(confusion_matrix=cm,display_labels = clf_b.classes_)
-    # disp.plot()
+    clf_b = MLPClassifier(activation='logistic', learning_rate_init=0.1,
+                          hidden_layer_sizes=(8, 2,), random_state=1, max_iter=150)
+    clf_b.fit(X_c, y_c)
+    plot_classifier(clf_b, X_c, y_c)
+    cm = confusion_matrix(y2_c, clf_b.predict(X2_c))
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm,display_labels = clf_b.classes_)
+    disp.plot()
 
-    #
-    # plt.show()
-    #
-    # # with adaline
+
+    plt.show()
+
+    # with adaline
     with_adaline(clf_a, Part.A)
-    # with_adaline(clf_b, Part.B)
+    with_adaline(clf_b, Part.B)
