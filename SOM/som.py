@@ -14,15 +14,16 @@ class SOM(object):
 
     def find_BMU(self, vector):
         min_dis_vector = np.inf
-        bmu = None
+        # bmu = None
+        
 
         for index, neuron in enumerate(self.neurons):
             dist = np.linalg.norm(vector - neuron)
 
             if min_dis_vector > dist:
                 min_dis_vector = dist
-                bmu = neuron
-
+                bmu = index
+                # ret_index = index
         # for x in range(self.neurons.shape[0]):
         #     for y in range(self.neurons.shape[1]):
         # n = self.neurons[x, y]
@@ -35,9 +36,9 @@ class SOM(object):
         return bmu
 
     def update_neurons(self, bmu, sample_i, iter):
+        curr_lr = self.initial_learning_rate * np.exp(-iter / 300)
         for index, neuron in enumerate(self.neurons):
-            dis = np.linalg.norm(bmu - neuron)
-            curr_lr = self.initial_learning_rate * np.exp(-iter / 300)
+            dis = np.linalg.norm(bmu - index)
             radius = np.exp(-np.power(dis, 2) / self.initial_radius)
             self.neurons[index] += curr_lr * radius * (sample_i - self.neurons[index])
 
@@ -58,8 +59,9 @@ class SOM(object):
 
             if debug:
                 print(str(int(epoch / times * 100)) + '%')  # Progress percentage
+        self.plot(epochs, None)
 
-    def plot(self, iter):  # , epoch):
+    def plot(self, iter, sample):  # , epoch):
 
         x_axis, y_axis = np.hsplit(self.neurons, 2)
 
@@ -72,6 +74,8 @@ class SOM(object):
         # ax.plot(xs, ys)
         ax.scatter(self.data[:, 0], self.data[:, 1], alpha=0.3)
 
+        if sample is not None:
+            ax.scatter(sample[0], sample[1], c='red')
         ax.set_title("Data size: " + str(len(self.data)) + " | "
                      + "Iteration: " + str(iter) + " | "
                      # + "Epoch :" + str(epoch) +
