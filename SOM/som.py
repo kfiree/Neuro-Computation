@@ -43,26 +43,28 @@ class SOM(object):
                 radius = np.exp(-np.power(dis, 2) / self.initial_radius)
                 self.neurons[i, j] += curr_lr * radius * (sample_i - self.neurons[i, j])
 
-    def train(self, input, epochs=5, times=100, neurons=100, radius=.1, debug=False, fig_path=None):
+    def train(self, input, epochs=5, times=100, neurons=100, radius=.1, debug=False, fig_path=None, choose_func=None):
         self.data = input
         self.epochs = epochs
         self.plot(0, None)
-        iter = 0
         for epoch in np.arange(epochs):
-            np.random.shuffle(self.data)
+            if choose_func is None:
+                index = np.random.randint(0, len(self.data))
+            else:
+                index = choose_func(self.data)
+            # np.random.shuffle(self.data)
 
-            for index, sample in enumerate(self.data):
-                bmu = self.find_BMU(sample)
-                if debug and (index * (epoch + 1)) % 200 == 0:
-                    self.plot(index, None)  # , epoch)
+            # for index, sample in enumerate(self.data):
+            bmu = self.find_BMU(self.data[index])
+            if debug and (index * (epoch + 1)) % 200 == 0:
+                self.plot(index, None)  # , epoch)
 
-                self.update_neurons(bmu, sample, index)
+            self.update_neurons(bmu, self.data[index], index)
 
-                iter += 1
-                if fig_path is not None and iter % 500 == 0:
-                    self.plot_snake(iter, fig_path)
-            if True:
-                print(str(int(epoch / times * 100)) + '%')  # Progress percentage
+            if fig_path is not None and epoch % 1000 == 0:
+                self.plot_snake(epoch, fig_path)
+            # if True:
+            #     print(str(int(epoch / times * 100)) + '%')  # Progress percentage
         self.plot(epochs, None)
 
     def plot_snake(self, iter, fig_path):

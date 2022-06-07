@@ -7,21 +7,46 @@ from som import SOM
 DATA_SIZE = 1000
 
 
-def generate_unbalanced(data_size=DATA_SIZE, a=True):
-    np.random.seed(1)
-    if a:
-        x_1 = np.random.uniform(0.5, 1, int(data_size / 4 * 3))
-        x_2 = np.random.uniform(0, 0.5, int(data_size / 4 * 1))
-        y = np.random.uniform(0, 1, data_size)
-        x = np.concatenate((x_1, x_2), dtype=float)
-    else:
-        x_1 = np.random.uniform(0.5, 1, int(data_size / 2))
-        x_2 = np.random.uniform(0, 0.5, int(data_size / 2))
-        y_1 = np.random.uniform(0.5, 1, int(data_size / 2))
-        y_2 = np.random.uniform(0, 0.5, int(data_size / 2))
-        x = np.concatenate((x_1, x_2), dtype=float)
-        y = np.concatenate((y_1, y_2), dtype=float)
-    return np.array([x, y]).T
+#
+# def generate_unbalanced(data_size=DATA_SIZE, a=True):
+#     np.random.seed(1)
+#     if a:
+#         x_1 = np.random.uniform(0.5, 1, int(data_size / 4 * 3))
+#         x_2 = np.random.uniform(0, 0.5, int(data_size / 4 * 1))
+#         y = np.random.uniform(0, 1, data_size)
+#         x = np.concatenate((x_1, x_2), dtype=float)
+#     else:
+#         x_1 = np.random.uniform(0.5, 1, int(data_size / 2))
+#         x_2 = np.random.uniform(0, 0.5, int(data_size / 2))
+#         y_1 = np.random.uniform(0.5, 1, int(data_size / 2))
+#         y_2 = np.random.uniform(0, 0.5, int(data_size / 2))
+#         x = np.concatenate((x_1, x_2), dtype=float)
+#         y = np.concatenate((y_1, y_2), dtype=float)
+#     return np.array([x, y]).T
+
+
+def choose_x_over_025(data):
+    # np.random.seed(1)
+    chance = np.random.uniform(0, 1)
+    index = np.random.randint(0, len(data))
+    while True:
+        if data[index][0] > 0.25 and chance >= 0.25:
+            return index
+        elif data[index][0] < 0.25 and chance < 0.25:
+            return index
+        index = np.random.randint(0, len(data))
+
+
+def choose_more_center(data):
+    chance = np.random.uniform(0, 1)
+    index = np.random.randint(0, len(data))
+    while True:
+        if 0.8 >= data[index][0] >= 0.2 and 0.8 >= data[index][1] >= 0.2 and chance >= 0.25:
+            return index
+        elif (data[index][0] < 0.2 or data[index][0] > 0.8) and (data[index][1] < 0.2 or data[index][1] > 0.8) \
+                and chance < 0.25:
+            return index
+        index = np.random.randint(0, len(data))
 
 
 def generateData(part, data_size=DATA_SIZE, debug=False):
@@ -54,34 +79,33 @@ def generateDisk(data_size=DATA_SIZE):
 def PartA():
     # Q1.a
     data = generateDisk()
-    model = SOM(rows=1, cols=100, radius=2, learning_rate=0.9)
-    model.train(data, debug=False, epochs=10,
+    model = SOM(rows=1, cols=100, radius=3, learning_rate=0.9)
+    model.train(data, debug=False, epochs=10000,
                 fig_path='E:\\Git\\Neuro-Computation\\SOM\\partA\\disk_images\\100_neurons_in_line')
 
     # Q1.b
     model = SOM(rows=10, cols=10, radius=2, learning_rate=0.9)
-    model.train(data, debug=False, epochs=10,
+    model.train(data, debug=False, epochs=10000,
                 fig_path='E:\\Git\\Neuro-Computation\\SOM\\partA\\disk_images\\10x10_neurons')
 
     # Q1.c
-    data = generate_unbalanced()
-    model = SOM(rows=10, cols=10, radius=2, learning_rate=0.9)
-    model.train(data, debug=False, epochs=10,
-                fig_path='E:\\Git\\Neuro-Computation\\SOM\\partA\\disk_images\\unbalanced\\a')
-    data = generate_unbalanced(a=False)
+    # data = generate_unbalanced()
+    model = SOM(rows=10, cols=10, radius=2, learning_rate=0.7)
+    model.train(data, debug=False, epochs=30000,
+                fig_path='E:\\Git\\Neuro-Computation\\SOM\\partA\\disk_images\\unbalanced\\a',
+                choose_func=choose_x_over_025)
+    # data = generate_unbalanced(a=False)
     model = SOM(rows=10, cols=10, radius=2, learning_rate=0.4)
-    model.train(data, debug=False, epochs=40,
-                fig_path='E:\\Git\\Neuro-Computation\\SOM\\partA\\disk_images\\unbalanced\\b')
+    model.train(data, debug=False, epochs=40000,
+                fig_path='E:\\Git\\Neuro-Computation\\SOM\\partA\\disk_images\\unbalanced\\b',
+                choose_func=choose_more_center)
 
     # Q1.d
     data = generate_donut()
     model = SOM(rows=1, cols=30, radius=2, learning_rate=0.4)
-    model.train(data, debug=False, epochs=10,
+    model.train(data, debug=False, epochs=10000,
                 fig_path='E:\\Git\\Neuro-Computation\\SOM\\partA\\disk_images\\donut')
 
-def PartB():
 
-
-    
 if __name__ == '__main__':
     PartA()
