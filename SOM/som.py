@@ -35,8 +35,8 @@ class SOM(object):
 
         return bmu
 
-    def update_neurons(self, bmu, sample_i, iter):
-        curr_lr = self.initial_learning_rate * np.exp(-iter / 300)
+    def update_neurons(self, bmu, sample_i, iter,epoches):
+        curr_lr = self.initial_learning_rate * np.exp(-iter / epoches)
         for i, neuron in enumerate(self.neurons):
             for j, point in enumerate(neuron):
                 dis = np.linalg.norm(np.subtract(bmu, [i, j]))
@@ -59,7 +59,7 @@ class SOM(object):
             if debug and (index * (epoch + 1)) % 200 == 0:
                 self.plot(index, None)  # , epoch)
 
-            self.update_neurons(bmu, self.data[index], index)
+            self.update_neurons(bmu, self.data[index], epoch, epochs)
 
             if fig_path is not None and epoch % 1000 == 0:
                 self.plot_snake(epoch, fig_path)
